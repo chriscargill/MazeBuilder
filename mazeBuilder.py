@@ -92,60 +92,50 @@ def checkIfBlockSizeExists(sizeX, sizeY):
     global adding_index
     for current_indexer, values_list in all_data.items(): # this line??!?!?!
         isAllOneColor = True
-        # print(f"Checking {sizeX} by {sizeY} at {values_list}")
-        # Check to make sure that the value still EXISTS in the all_data_to_be_popped dictionary
+            # Check to make sure that the value still EXISTS in the all_data_to_be_popped dictionary
         if current_indexer in all_data_to_be_popped.keys():
-            # Check to make sure that the value in both dictionaries MATCH
+                # Check to make sure that the value in both dictionaries MATCH
             if all_data_to_be_popped[current_indexer] == values_list:
-                # if all points are still in the image bounds, then work on that data
+                    # if all points are still in the image bounds, then work on that data
                 values_list_row, values_list_column, *rgb_Values = values_list
-                ### print(f"row::{values_list_row}, column::{values_list_column}")
-                ### print(f"Is {values_list_row + sizeX} less than  or equal to {length} length?")
-                ### print(f"Is {values_list_column + sizeY} less than or equal to {height} height?")
                 if values_list_column + sizeY <= height and values_list_row + sizeX <= length:
-                    # go through each row
-                    # set the RGB values that we are looking for to be the RGB values of the first location in the box
+                        # go through each row
+                        # set the RGB values that we are looking for to be the RGB values of the first location in the box
                     current_row_index,current_column_index,current_R,current_G,current_B = all_data[(values_list_row,values_list_column)]
-                    ### print(f"curerent row: {current_row_index} should be equal to values list row: {values_list_row}")
-                    ### print(f"curerent column: {current_column_index} should be equal to values list column: {values_list_column}")
                     for y in range(0, sizeY):
-                        ### print(f"loop Y is {y}")
-                        # go through each column within the row
+                            # go through each column within the row
                         for x in range(0, sizeX):
-                            ### print(f"loop X is {x}")
-                            # on the values within the image, check if they are all the same color
+                                # on the values within the image, check if they are all the same color
                             try:
-                                # grab the values of the current pixel
-                                # these x and y values are not the real x and y values, but only local to the box
-                                # we have to get the initial x and y values and then extrapolate the other values based on that
-                                # or find a way to convert each x and y to it's actual x and y
+                                    # grab the values of the current pixel
+                                    # these x and y values are not the real x and y values, but only local to the box
+                                    # we have to get the initial x and y values and then extrapolate the other values based on that
+                                    # or find a way to convert each x and y to it's actual x and y
                                 actual_x = values_list_row + x
                                 actual_y = values_list_column + y
-                                ### print(f"actual X is: {actual_x}, actual Y is: {actual_y}")
                                 (row_index,column_index,R,G,B) = all_data_to_be_popped[(actual_x, actual_y)]
 
                                 if R == current_R:
                                     if G == current_G:
                                         if B == current_B:
                                             try:
-                                                # Why am I using index_dict and not some other variable?
+                                                    # Why am I using index_dict and not some other variable?
                                                 index_dict[(actual_x,actual_y)] = [actual_x,actual_y,R,G,B]
-                                                ### print("Colors match")
-                                                # remove the data here, for this location and subsequent locations within the block
+                                                    # remove the data here, for this location and subsequent locations within the block
                                             except Exception as e:
                                                 print(f"Huh? {e}")
                                         else:
-                                            ### print("B is different, skipping...")
+                                                # If B is different:
                                             isAllOneColor = False
                                             index_dict = {}
                                             break
                                     else:
-                                        ### print("G is different, skipping...")
+                                            #if G is different:
                                         isAllOneColor = False
                                         index_dict = {}
                                         break
                                 else:
-                                    ### print("R is different, skipping...")
+                                        # If R is different:
                                     isAllOneColor = False
                                     index_dict = {}
                                     break
@@ -165,25 +155,22 @@ def checkIfBlockSizeExists(sizeX, sizeY):
                         if location == (values_list_row, values_list_column): # Get only the starting pixel location in the block
                             x,y = location
                             r_val,g_val,b_val,*etc_val = rgb_Values
-                            # remove white space
+                                # remove white space
                             if removeWhiteSpace(r_val,g_val,b_val):
                                 print(f"White block found {location}, {sizeX} by {sizeY}")
                             else: # Save the data as a block
                                 print(f"Storing block {location}, {sizeX} by {sizeY}")
                                 saved_blocks[adding_index] = f"{{{x},{y},{r_val},{g_val},{b_val},{sizeX},{sizeY}}}"
-                        # Remove all the block locations and values from the all_data_to_be_popped array
+                            # Remove all the block locations and values from the all_data_to_be_popped array
                         del all_data_to_be_popped[location]
-                        ### print(f"Removed index: {location} at size {sizeX} by {sizeY}")
                     index_dict = {}
                     adding_index += 1
                 else:
                     pass
             else:
-                pass
-                ### print(f"values {values_list} and {all_data_to_be_popped[current_indexer]}don't match, skipping.")
+                pass # If the values in both dictionaries don't match
         else:
-            pass
-            ### print(f"value {values_list} doesn't exist, skipping.")
+            pass # If the value does not exists in the all_data_to_be_popped dictionary
 
 def removeWhiteSpace(r,g,b):
     if r == 255:
